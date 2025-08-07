@@ -1,30 +1,27 @@
 .include "inc/vera.inc.asm"
-
-.macro  set_line_int LINE_L, LINE_H
-    lda #LINE_L
-    sta $9F28 ;IRQLINE_L (Write only)
-
-    lda VERA::IEN
-    .if (LINE_H > 0)
-    ora #%10000000
-    .else
-    and #%01111111
-    .endif
-    sta VERA::IEN  ;IRQLINE_H (bit 8)
-.endmacro
+.include "inc/macros.inc.asm"
 
 .segment "INIT"
 .segment "ONCE"
+
+; ==============================================================================
+; ZEROPAGE VARIABLES
+; ==============================================================================
 .segment "ZEROPAGE"
 palette_counter:   .byte $00
 bitmap_pointer:    .addr $0000
 palette_pointer:   .addr $0000
 
+; ==============================================================================
+; READ-ONLY DATA (Palettes and Bitmap)
+; ==============================================================================
 .segment "DATA"
-color_palette:
-.include "data/demodata_palettes.s"
-.include "data/demodata_pixels.s"
+.include "../data/demodata_palettes.s"
+.include "../data/demodata_pixels.s"
 
+; ==============================================================================
+; MAIN PROGRAM CODE
+; ==============================================================================
 .segment "CODE"
 
     jsr enable_bitmap_mode
@@ -37,16 +34,16 @@ color_palette:
 
 reset_pointers:
     ; set pointer to point the beggining of the bitmap
-    lda #<bitmap_data
-    sta bitmap_pointer
-    lda #>bitmap_data
-    sta bitmap_pointer+1
+    ; lda #<bitmap_data
+    ; sta bitmap_pointer
+    ; lda #>bitmap_data
+    ; sta bitmap_pointer+1
 
    ; set pointer to point the beggining of the color palette
-    lda #<color_palette
-    sta palette_pointer
-    lda #>color_palette
-    sta palette_pointer+1
+    ; lda #<color_palette
+    ; sta palette_pointer
+    ; lda #>color_palette
+    ; sta palette_pointer+1
     rts
 
 
@@ -82,10 +79,10 @@ byte_loop:
     sta palette_counter
 
     ; set pointer to point the beggining of the color palette
-    lda #<color_palette
-    sta palette_pointer
-    lda #>color_palette
-    sta palette_pointer+1
+    ; lda #<color_palette
+    ; sta palette_pointer
+    ; lda #>color_palette
+    ; sta palette_pointer+1
 
  @skip_reset:   
     rts

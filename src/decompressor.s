@@ -21,6 +21,8 @@ ZP_RLE_PTR   = $fb  ; 2-byte pointer to RLE data (address: $fb, $fc)
 ; ==============================================================================
 ;                                 MAIN ROUTINE
 ; ==============================================================================
+.segment "ONCE"
+
 DecompressRLEToVERA:
     ; --- Step 1: Set the destination address in VERA ---
     ; Set VERA to write to VRAM (address space 0) starting at address $00000
@@ -44,9 +46,9 @@ decompress_loop:
     ; Load the control byte from the RLE stream
     lda (ZP_RLE_PTR),y
     inc ZP_RLE_PTR
-    bne !+
+    bne @skip
     inc ZP_RLE_PTR+1
-!:
+@skip:
 
     ; Check for the terminator byte
     cmp #$ff
@@ -59,16 +61,16 @@ decompress_loop:
 ; --- It means the incoming bytes are not compressed and should be copied "as it is" ---
 handle_literal_packet:
     tax               
-.copy_loop:
+@copy_loop:
     ldy #$00            ; Offset for the pointer is always 0
     lda (ZP_RLE_PTR),y
     sta VERA_DATA0      ; Write byte to VERA
     inc ZP_RLE_PTR
-    bne !+
+    bne @skip
     inc ZP_RLE_PTR+1
-!:
+@skip:
     dex
-    bpl .copy_loop ; Loop `length` times (from N-1 down to 0)
+    bpl @copy_loop ; Loop `length` times (from N-1 down to 0)
     jmp decompress_loop
 
 ; --- Handle run packet ---
@@ -80,14 +82,14 @@ handle_run_packet:
     ldy #$00
     lda (ZP_RLE_PTR),y
     inc ZP_RLE_PTR
-    bne !+
+    bne @skip
     inc ZP_RLE_PTR+1
-!:
+@skip:
     ; Loop to write the same byte repeatedly
-.run_loop:
+@run_loop:
     sta VERA_DATA0      ; Write the repeated byte (it's in A) to VERA
     dex
-    bpl .run_loop
+    bpl @run_loop
     jmp decompress_loop
 
 done:

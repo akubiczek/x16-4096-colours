@@ -26,16 +26,19 @@ FINAL_PRG     := $(BUILD_DIR)/$(PROJECT_NAME).prg
 # --- Compiler flags ---
 AS_FLAGS      := -t cx16 -u __EXEHDR__ --mapfile $(BUILD_DIR)/map.txt
 
-.PHONY: all assets run clean
+.PHONY: all assets run clean build
 
 # ==============================================================================
 # TARGETS
 # ==============================================================================
 
 all: $(FINAL_PRG)
+		@echo "Starting emulator..."
+		$(EMULATOR) -scale 2 -prg $(FINAL_PRG) -run -debug
+
+build: $(FINAL_PRG)
 
 run: all
-	$(EMULATOR) -scale 2 -prg $(FINAL_PRG) -run -debug
 
 assets: $(GENERATED_S)
 
