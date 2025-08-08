@@ -3,12 +3,14 @@ PYTHON        := python3
 AS            := cl65
 EMULATOR      := /Applications/CommanderX16/x16emu
 
-STRIP_HEIGHT  ?= 16
+STRIP_HEIGHT  ?= 30
 LOCAL_COLORS  ?= 128
 
 PROJECT_NAME  := demodata
 SRC_DIR       := src
-SRC_FILES     := $(wildcard $(SRC_DIR)/*.s)
+MAIN_SRC      := $(SRC_DIR)/main.s
+OTHER_SRCS    := $(filter-out $(MAIN_SRC), $(wildcard $(SRC_DIR)/*.s))
+SRC_FILES     := $(MAIN_SRC) $(OTHER_SRCS)
 
 INC_DIRS      := src/inc
 
@@ -58,4 +60,4 @@ $(FINAL_PRG): $(SRC_FILES) $(GENERATED_S)
 $(GENERATED_S): $(RAW_IMAGE) $(PYTHON_SCRIPT)
 	@echo "Generating resources from the image (strip height: $(STRIP_HEIGHT)px, local colors: $(LOCAL_COLORS))..."
 	@mkdir -p $(DATA_DIR)
-	$(PYTHON) $(PYTHON_SCRIPT) $(RAW_IMAGE) $(DATA_DIR)/$(PROJECT_NAME) --strip-height $(STRIP_HEIGHT) --local-colors $(LOCAL_COLORS)
+	$(PYTHON) $(PYTHON_SCRIPT) $(RAW_IMAGE) $(DATA_DIR)/$(PROJECT_NAME) --strip-height $(STRIP_HEIGHT) --local-colors $(LOCAL_COLORS) 

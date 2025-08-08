@@ -109,7 +109,11 @@ def process_image(input_path, output_prefix, strip_height, local_colors):
         pixels_filename = f"{output_prefix}_pixels.s"
 
         with open(palettes_filename, 'w') as f_pal:
-            f_pal.write(f"; Palettes for image '{input_path}'\n")
+            f_pal.write(f"; Palettes for image '{input_path}'\n\n")
+            
+            f_pal.write(f"NUMBER_OF_PALETTES = {num_strips}\n")
+            f_pal.write(f"NUMBER_OF_COLORS = {local_colors}\n\n")
+            f_pal.write(f"palette_data_start:\n")
 
             for i in range(num_strips):
                 print(f"Processing strip #{i+1}/{num_strips}...")
