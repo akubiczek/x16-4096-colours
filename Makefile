@@ -3,7 +3,7 @@ PYTHON        := python3
 AS            := cl65
 EMULATOR      := /Applications/CommanderX16/x16emu
 
-STRIP_HEIGHT  ?= 30
+STRIP_HEIGHT  ?= 20
 LOCAL_COLORS  ?= 128
 
 PROJECT_NAME  := demodata
@@ -20,7 +20,7 @@ ASSETS_DIR    := assets
 TOOLS_DIR     := tools
 
 # --- Input and output files ---
-RAW_IMAGE     := $(ASSETS_DIR)/images/input.png
+RAW_IMAGE     := $(ASSETS_DIR)/images/input_gemini.png
 PYTHON_SCRIPT := $(TOOLS_DIR)/converter.py
 GENERATED_S   := $(DATA_DIR)/$(PROJECT_NAME)_palettes.s $(DATA_DIR)/$(PROJECT_NAME)_pixels.s
 FINAL_PRG     := $(BUILD_DIR)/$(PROJECT_NAME).prg
@@ -36,7 +36,7 @@ AS_FLAGS      := -t cx16 -u __EXEHDR__ --mapfile $(BUILD_DIR)/map.txt
 
 all: $(FINAL_PRG)
 		@echo "Starting emulator..."
-		$(EMULATOR) -scale 2 -prg $(FINAL_PRG) -run -debug
+		$(EMULATOR) -scale 1 -prg $(FINAL_PRG) -run -debug
 
 build: $(FINAL_PRG)
 

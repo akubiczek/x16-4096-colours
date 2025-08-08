@@ -11,8 +11,7 @@
 ; ==============================================================================
 
 CACHE_START_ADDR = $2c00
-STRIP_HEIGHT = 30
-NUMBER_OF_COLORS_TO_COPY = 128 ; 256, 128, 64, 32 or 16
+STRIP_HEIGHT = 20*2-2
 
 BYTES_PER_COLOR  = 2
 TOTAL_PALETTE_BYTES = NUMBER_OF_PALETTES * NUMBER_OF_COLORS * BYTES_PER_COLOR
@@ -44,10 +43,11 @@ bytes_left: .addr $0000 ; 2-byte counter for remaining bytes to copy
 
     jsr enable_bitmap_mode
     jsr cache_real_palette
-    jsr clear_screen
+    ; jsr copy_palette_optimized
+    ; jsr clear_screen
     jsr DecompressRLEToVERA
 
-    ; jsr set_custom_irq_handler
+    jsr set_custom_irq_handler
 @loop:
     jmp @loop
 
@@ -133,7 +133,7 @@ copy_palette_optimized:
     lda #%00010001          ;enable auto-increment address by 1
     sta VERA::ADDRx_H
 
-    ldx #NUMBER_OF_COLORS_TO_COPY/8 ; (2 cycles)      
+    ldx #NUMBER_OF_COLORS/8 ; (2 cycles)      
 byte_loop:
     .repeat 16            ; 16*32 = 512 bytes to be copied (256 cycles total)
     lda VERA::DATA1       ; read from VRAM cache, increment source address automatically  (4 cycles)
